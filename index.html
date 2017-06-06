@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JS7-9</title>
+    <meta charset="utf-8">
+</head>
+
+<body>
+<img id="mojaslika" height="300"><br/>
+<br>
+<input type="button" value="startaj show" id="g1"/>
+<input type="button" value="zaustavi show" id="g2"/><br>
+Brzina<br>
+<div id="speed">500</div>
+<br>
+Odaberite koliko slika u sekundi<br>
+<input type="radio" value="0.5" name="rr">0.5</input><br>
+<input type="radio" value="1" name="rr">1</input><br>
+<input type="radio" value="2" name="rr">2</input><br>
+<input type="radio" value="5" name="rr">5</input><br>
+<br>
+<div id="current">Slika: </div>
+<div id="counter">Brojac: </div>
+<br><br>
+<button id="dodaj">Dodaj sliku</button><input type="text" id="dodaj_text"></input>
+<span id="short1"></span><br>
+<button id="makni">Maknu sliku</button><input type="text" id="makni_text"></input>
+<span id="short2"></span><br>
+<script type="text/javascript">
+    var period=500;
+var speed = document.getElementById("speed");
+var current = document.getElementById("current");
+var counter = document.getElementById("counter");
+var radios = document.getElementsByName("rr");
+var dodaj_text=document.getElementById("dodaj_text");
+var makni_text=document.getElementById("makni_text");
+
+for (let i=0;i<radios.length;i++)
+    radios[i].addEventListener('click',function(){
+    period = 1000/radios[i].value;
+    speed.innerHTML=period;
+    })
+
+var brojac = 0;
+    //preloadanje slika - stvaramo image objekte koje æemo koristiti, tako da se ne uèitavaju poslije slike svaki put kad ih koristimo
+
+    var slike_text=["pic1.jpg", "pic2.jpg", "pic3.jpg"];
+    
+    var slike=["pic1.jpg", "pic2.jpg", "pic3.jpg"];    
+    slike=slike.map((ime)=>{
+
+        var slika=document.createElement('img');   // moze i var slika = new Image();
+        slika.src=ime;
+        slika.id="mojaslika";
+
+        return slika;
+
+    });
+
+    var vrijeme;
+
+    var indeks=0;
+
+    function zamjeniSliku(){
+
+        var img=document.getElementById('mojaslika');
+        img.src=slike[indeks].src;
+        //ili img.outerHTML=slike[indeks].outerHTML;
+        //ili document.body.replaceChild(slike[indeks],img);
+        current.innerHTML ="Slika: " + slike_text[indeks];
+        indeks++; brojac++;
+        counter.innerHTML ="Brojac: "+ brojac;
+        if (indeks >=slike.length) indeks=0;
+
+    }
+
+    document.getElementById('g1').addEventListener('click', function(){
+
+        clearInterval(vrijeme);
+        vrijeme=setInterval(zamjeniSliku,period);
+
+    });
+
+    document.getElementById('g2').addEventListener('click', function(){
+
+        clearInterval(vrijeme);
+
+    });
+    
+    document.getElementById('dodaj').addEventListener('click',function(){
+    console.log(dodaj_text.value);
+    slike_text[slike_text.length]=dodaj_text.value;
+    var nova = document.createElement('img');
+        nova.src=dodaj_text.value;
+        nova.id="mojaslika";
+    slike[slike.length]=nova;
+    document.getElementById("short1").innerHTML="Slika dodana";
+    setTimeout(function(){document.getElementById("short1").innerHTML="";}, 2000);
+    })    
+    
+    document.getElementById('makni').addEventListener('click',function(){
+    var redniBroj = slike_text.findIndex(function(e){return e.value==makni_text.value});
+
+    if(redniBroj!=-1){    
+    slike_text.splice(redniBroj,1);
+    slike.splice(redniBroj,1);
+    document.getElementById("short2").innerHTML="Slika maknuta";
+    setTimeout(function(){document.getElementById("short2").innerHTML="";}, 2000);}
+
+    })
+
+</script>
+
+</body>
+
+</html>
